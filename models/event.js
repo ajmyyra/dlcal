@@ -6,7 +6,9 @@ var EventSchema = new Schema({
     description: String,
     startTime: Date,
     endTime: Date,
-    deadline: Date
+    deadline: Date,
+    added: Date,
+    changed: Date
 });
 
 module.exports = mongoose.model('Event', EventSchema);
