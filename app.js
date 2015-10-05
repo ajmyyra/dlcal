@@ -74,7 +74,7 @@ api.post('/authenticate', function(req, res) {
                 console.log('User logged in: ' + user.username)
 
                 var newToken = jwt.sign(user, app.get('protectedSecret'), {
-                    expiresIn: 7200 // 2 hour expiration
+                    expiresIn: 7200 // 2 hour expiration TODO tokens don't expire
                 });
 
                 res.json({ success: true, message: 'Accepted, you can now use the API.', token: newToken });
@@ -106,23 +106,27 @@ api.use(function(req, res, next) {
 });
 
 api.get('/', function(req, res) {
-    res.json({ message: 'Here is our calendar API!\nSo far it provides CRUD actions for calendar events.' });
+    res.json({ message: 'Here is our calendar API!\nSo far it provides CRUD actions for calendar events, and .' });
 });
 
-api.route('/user')// TODO When we can create users, change this to show user information. Don't show password.
+api.route('/user') // TODO do not give out password (hash for passwords would be nice too)
     .get(function(req, res) {
-        User.find(function(err, users) {
+        User.find( {
+            username: req.decoded.username
+        } , function(err, user) {
             if (err)
                 res.send(err);
 
-            res.json(users);
+            res.json(user);
         });
     });
+
 
 api.route('/events')
 
     .post(function(req, res) {
         var event = new Event();
+        event.user = req.decoded.username;
         event.name = req.body.name;
         event.description = req.body.description;
         event.startTime = req.body.startTime;
@@ -153,18 +157,65 @@ api.route('/events')
 api.route('/events/deadlines')
 
     .get(function(req, res, next) {
-        Event.find(function(err, events) {
+        Event.find( {
+            "deadline": {"$gte": new Date()}
+        }, function(err, events) {
             if (err)
                 res.send(err);
 
             events.sort(function(a,b){return a.deadline - b.deadline});
             res.json(events);
-        });
+        }).sort( { deadline: 1 } ).limit(5);
     });
+
+api.get('/events/search/:year', function(req, res) { // Full year (2014, 2015, ...)
+
+    var year = req.params.year;
+    Event.find( {
+        "startTime": {"$gte": new Date(year, 0, 0, 00, 00), "$lt": new Date(year, 11, 31, 24, 00)}
+    }, function(err, events) {
+        if (err)
+            res.send(err);
+
+        res.json(events);
+
+    })
+});
+
+api.get('/events/search/:year/:month', function(req, res) { // Months (1-12)
+
+    var year = req.params.year;
+    var month = req.params.month - 1; // Because Date(), http://www.w3schools.com/jsref/jsref_obj_date.asp
+    Event.find( {
+        "startTime": {"$gte": new Date(year, month, 1, 00, 00), "$lt": new Date(year, month, 31, 23, 59)}
+    }, function(err, events) {
+        if (err)
+            res.send(err);
+
+        res.json(events);
+
+    })
+});
+
+api.get('/events/search/:year/:month/:day', function(req, res) { // Days (1-31)
+
+    var year = req.params.year;
+    var month = req.params.month - 1; // Because Date(), http://www.w3schools.com/jsref/jsref_obj_date.asp
+    var day = req.params.day;
+    Event.find( {
+        "startTime": {"$gte": new Date(year, month, day, 00, 00), "$lt": new Date(year, month, day, 23, 59)}
+    }, function(err, events) {
+        if (err)
+            res.send(err);
+
+        res.json(events);
+
+    })
+});
 
 api.route('/events/:event_id')
 
-    .get(function(req, res, next) {
+    .get(function(req, res) {
         Event.findById(req.params.event_id, function(err, event) {
             if (err)
                 res.send(err);
@@ -189,6 +240,7 @@ api.route('/events/:event_id')
                 res.json({ message: 'Event not found.' });
             }
             else {
+                event.user = req.decoded.username;
                 event.name = req.body.name;
                 event.description = req.body.description;
                 event.startTime = req.body.startTime;
