@@ -11,13 +11,42 @@ module.exports = {
 }
 
 ## Known bugs
-* Timezones! Times are added as UTC times, but MongoDB searches them with proper timezone.
+* Timezones! Times are added as UTC times, but MongoDB searches them with a proper timezone.
     * Should save them into correct timezone.
 
 ## Features in development
 * Shared events you can add to your friends calendar? Maybe!
 * Email when a deadline is closing in?
-    * Your calendar isn't as creepy as it should be when you need to be intimidated into doing things!
+    * Your normal calendar isn't as creepy as it should be when you need to be intimidated into doing things!
+
+## Installation
+
+Below are instructions to install dlCal on a new Ubuntu server.
+Remember that on small instances mongodb might need a smallfiles = true config option.
+
+Enjoy!
+
+```
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get install mongodb nodejs npm git
+git clone https://github.com/ajmyyra/dlcal.git
+cd dlcal
+npm install
+```
+
+We'll use pm2 application manager to run the program. In actual setups we should have a proxy server between us and the Interwebs.
+Find more from https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-ubuntu-14-04
+
+Install pm2 as shown below. Before actually running the app (pm2 start) remember to create your own config.js with correct settings.
+
+```
+sudo npm install pm2 -g
+sudo ln -s /usr/bin/nodejs /usr/local/bin/node
+pm2 start bin/www
+```
+
+Enjoy your very own dlCal setup!
 
 ## Setting up
 
