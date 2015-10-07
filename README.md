@@ -24,8 +24,6 @@ module.exports = {
 Below are instructions to install dlCal on a new Ubuntu server.
 Remember that on small instances mongodb might need a smallfiles = true config option.
 
-Enjoy!
-
 ```
 sudo apt-get update
 sudo apt-get upgrade
