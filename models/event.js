@@ -8,7 +8,7 @@ var EventSchema = new Schema({
     startTime: Date,
     endTime: Date,
     deadline: Date,
-    added: Date,
+    created: Date,
     changed: Date
 });
 

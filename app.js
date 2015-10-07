@@ -22,7 +22,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
 app.use(favicon(path.join(__dirname, 'public', 'favicon.png')));
-app.use(logger('dev'));
+app.use(logger('combined'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -35,7 +35,48 @@ routes.get('/', function(req, res) {
     res.render('index', { title: 'Calendar with deadlines', headline: 'dlCal - Calendar with deadlines' });
 });
 
-routes.get('/initialSetup', function(req, res) { // TODO For testing, add events
+routes.get('/initialSetup', function(req, res) { // Only for testing, will be removed when webapp is in production
+    var event1 = new Event({
+        user: 'testuser',
+        name: 'Test event 1',
+        description: 'First event for testing the system',
+        startTime: '2016-01-01T09:00',
+        endTime: '2016-01-01T12:00',
+        deadline: '2016-01-01T09:00',
+        created: new Date(),
+        changed: new Date()
+    });
+    var event2 = new Event({
+        user: 'testuser',
+        name: 'Test event 2',
+        description: 'Second event for testing the system',
+        startTime: '2015-10-15T15:00',
+        endTime: '2015-10-20T12:00',
+        deadline: '2015-10-19T20:00',
+        created: new Date(),
+        changed: new Date()
+    });
+    var event3 = new Event({
+        user: 'testuser',
+        name: 'Test event 3',
+        description: 'Third event for testing the system',
+        startTime: '2015-11-01T09:00',
+        endTime: '2015-11-08T12:00',
+        deadline: '2015-11-08T10:00',
+        created: new Date(),
+        changed: new Date()
+    });
+
+    event1.save(function(err) {
+        if (err) res.send(err);
+    });
+    event2.save(function(err) {
+        if (err) res.send(err);
+    });
+    event3.save(function(err) {
+        if (err) res.send(err);
+    });
+
     var testuser = new User({
         username: 'testuser',
         email: 'test@example.com'
@@ -59,8 +100,6 @@ routes.get('/initialSetup', function(req, res) { // TODO For testing, add events
             return res.json({ success: 'true', message: 'Setup done succesfully!' });
         });
     });
-
-
 });
 
 api.post('/register', function(req, res) {
@@ -96,7 +135,7 @@ api.post('/register', function(req, res) {
                     if (err)
                         res.send(err);
 
-                    console.log('Registered a new user: ' + newUser.username);
+                    console.log('Registered a new user: ' + newUser.username + ' (' + req._remoteAddress + ')');
                     return res.json({ success: 'true', message: 'Registration succesful!' });
                 });
             });
@@ -122,14 +161,14 @@ api.post('/authenticate', function(req, res) {
         }
         else {
 
-            crypto.pbkdf2(req.body.password, user.salt, 1000, 512, function(err, hashedKey) {
+            crypto.pbkdf2(req.body.password, user.salt, 10000, 512, function(err, hashedKey) {
                 if (user.password != hashedKey) {
-                    console.log('Login with wrong password for user ' + user.username)
+                    console.log('Login with wrong password for user ' + user.username + ' from ' + req._remoteAddress);
                     res.status(401);
                     return res.json({ success: false, message: 'Authentication failed. Wrong username or password.'});
                 }
                 else {
-                    console.log('User logged in: ' + user.username)
+                    console.log('User ' + user.username + ' logged in from ' + req._remoteAddress);
 
                     var newToken = jwt.sign( {user: user.username}, app.get('protectedSecret'), {
                         expiresIn: 7200 // 2 hour expiration
@@ -161,7 +200,7 @@ api.use(function(req, res, next) {
     }
     else {
         res.status(403);
-        return res.json({ success: false, message: 'No token provided' });
+        return res.json({ success: false, message: 'No token provided. Have you authenticated yet?' });
     }
 });
 
@@ -195,7 +234,7 @@ api.route('/user')
                         if (err)
                             res.send(err);
 
-                        console.log('User information updated.')
+                        console.log('User information updated.');
                         return res.json({ success: 'true', message: 'User information updated!' });
                     });
                 });
@@ -205,7 +244,7 @@ api.route('/user')
                     if (err)
                         res.send(err);
 
-                    console.log('User information updated.')
+                    console.log('User information updated.');
                     return res.json({ success: 'true', message: 'User information updated!' });
                 });
             }
@@ -234,20 +273,22 @@ api.route('/events')
         event.startTime = req.body.startTime;
         event.endTime = req.body.endTime;
         event.deadline = req.body.deadline;
-        event.added = new Date();
+        event.created = new Date();
         event.changed = new Date();
 
         event.save(function(err) {
             if (err)
                 res.send(err);
 
-            console.log('New event created.')
+            console.log('New event created.');
             return res.json({ success: 'true', message: 'New event created!' });
         });
     })
 
-    .get(function(req, res, next) { // TODO search only those created by user, example: deadlines
-        Event.find(function(err, events) {
+    .get(function(req, res) {
+        Event.find( {
+            "user": req.decoded.user
+        }, function(err, events) {
             if (err)
                 res.send(err);
 
@@ -279,8 +320,9 @@ api.get('/events/search', function(req, res) {
 api.get('/events/search/:year', function(req, res) { // Full year (2014, 2015, ...)
 
     var year = req.params.year;
-    Event.find( { // TODO search only those created by user, example: deadlines
-        "startTime": {"$gte": new Date(year, 0, 0, 00, 00), "$lt": new Date(year, 11, 31, 24, 00)}
+    Event.find( {
+        "startTime": {"$gte": new Date(year, 0, 0, 00, 00), "$lt": new Date(year, 11, 31, 24, 00)},
+        "user": req.decoded.user
     }, function(err, events) {
         if (err)
             res.send(err);
@@ -295,7 +337,8 @@ api.get('/events/search/:year/:month', function(req, res) { // Months (1-12)
     var year = req.params.year;
     var month = req.params.month - 1; // Because Date(), http://www.w3schools.com/jsref/jsref_obj_date.asp
     Event.find( {
-        "startTime": {"$gte": new Date(year, month, 1, 00, 00), "$lt": new Date(year, month, 31, 23, 59)}
+        "startTime": {"$gte": new Date(year, month, 1, 00, 00), "$lt": new Date(year, month, 31, 23, 59)},
+        "user": req.decoded.user
     }, function(err, events) {
         if (err)
             res.send(err);
@@ -308,10 +351,11 @@ api.get('/events/search/:year/:month', function(req, res) { // Months (1-12)
 api.get('/events/search/:year/:month/:day', function(req, res) { // Days (1-31)
 
     var year = req.params.year;
-    var month = req.params.month - 1; // Because Date(), http://www.w3schools.com/jsref/jsref_obj_date.asp
+    var month = req.params.month - 1;
     var day = req.params.day;
     Event.find( {
-        "startTime": {"$gte": new Date(year, month, day, 00, 00), "$lt": new Date(year, month, day, 23, 59)}
+        "startTime": {"$gte": new Date(year, month, day, 00, 00), "$lt": new Date(year, month, day, 23, 59)},
+        "user": req.decoded.user
     }, function(err, events) {
         if (err)
             res.send(err);
@@ -329,12 +373,17 @@ api.route('/events/:event_id')
                 return res.send(err);
 
             if (!event) {
-                res.status(404);
-                res.json({ message: 'Event not found.' });
+                res.status(404); // Not found
+                return res.json({ message: 'Event not found.' });
             }
             else {
-                // TODO check if created by user
-                return res.json(event);
+                if (event.user != req.decoded.user) {
+                    res.status(403); // Forbidden
+                    return res.json({ message: 'Not authorized to view this event.' });
+                }
+                else {
+                    return res.json(event);
+                }
             }
         })
     })
@@ -348,7 +397,12 @@ api.route('/events/:event_id')
                 res.status(404);
                 return res.json({ message: 'Event not found.' });
             }
-            else { // TODO check if created by user
+            else {
+                if (event.user != req.decoded.user) {
+                    res.status(403); // Forbidden
+                    return res.json({ message: 'Not authorized to modify this event.' })
+                }
+
                 if (req.body.name) event.name = req.body.name;
                 if (req.body.description) event.description = req.body.description;
                 if (req.body.startTime) event.startTime = req.body.startTime;
@@ -367,21 +421,25 @@ api.route('/events/:event_id')
         });
     })
 
-    .delete(function(req, res, next) {
+    .delete(function(req, res) {
         Event.findById(req.params.event_id, function(err, event) {
             if (err)
                 res.send(err);
 
             if (!event) {
-                res.status(404);
+                res.status(404); // Not found
                 return res.json({ message: 'Event not found.' })
             }
-            else {// TODO check if created by user
+            else if (event.user != req.decoded.user) {
+                res.status(403); // Forbidden
+                return res.json({ message: 'Not authorized to delete this event' });
+            }
+            else {
                 Event.remove({
                     _id: req.params.event_id
                 }, function(err, event) {
                     if (err)
-                        res.send(err);
+                        return res.send(err);
 
                     console.log('Event deleted.')
                     return res.json({ success: 'true', message: 'Event succesfully deleted.' });
@@ -401,7 +459,7 @@ app.use(function(req, res, next) {
 
 
 if (app.get('env') === 'development') {
-    app.use(function(err, req, res, next) {
+    app.use(function(err, req, res) {
         res.status(err.status || 500);
         res.render('error', {
             message: err.message,
@@ -410,7 +468,7 @@ if (app.get('env') === 'development') {
     });
 }
 
-app.use(function(err, req, res, next) {
+app.use(function(err, req, res) {
     res.status(err.status || 500);
     res.render('error', {
         message: err.message,
