@@ -12,20 +12,20 @@ module.exports = {
 
 ## Known bugs
 * Timezones! Times are added as UTC times, but MongoDB searches them with proper timezone.
-** Should save them into correct timezone.
+    * Should save them into correct timezone.
 
 ## Features in development
 * Shared events you can add to your friends calendar? Maybe!
 * Email when a deadline is closing in?
-** Your calendar isn't as creepy as it should be when you need to be intimidated into doing things!
+    * Your calendar isn't as creepy as it should be when you need to be intimidated into doing things!
 
 ## Setting up
 
 The system is somewhat self-explanatory. Once running, you'll need to register in order to start creating events.
 
 ```
-With only the api done, you can create user "testuser" (password "testBuzzword") with a few events to play with.
-This can be initialized with HTTP GET to /initialSetup .
+With only the api done, you can create user "testuser" (password "testBuzzword")
+with a few events to play with. This can be initialized with HTTP GET to /initialSetup .
 ```
 
 ### Registering
@@ -76,11 +76,11 @@ Just in case you run out of things to do.
 
 ### /api/user
 
-You can check your information any time with a GET to /api/user .
 We all have those Monday mornings when we can't even remember our email address.
+You can check your information any time with a GET to /api/user .
 
 You can change your information with a PUT request.
 As with events, just provide the information you wish to change.
 
 
-Our service has just launched and the webapp should be coming in a few weeks. Until then, have fun with the API!
+Our service has just launched and the web app should be coming in a few weeks. Until then, have fun with the API!
