@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>dlCal - Calendar with deadlines</title>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+    <script src="ang.js"></script>
+</head>
+<body ng-app="ang" ng-controller="Main as main">
+<h1>Welcome!</h1>
+<form ng-show="!main.isAuthed()">
+    <p>Please log in or register to use dlCal.</p>
+    <input type="text" ng-model="main.username" placeholder="username"><br>
+    <input type="password" ng-model="main.password" placeholder="password"><br>
+    <br>
+
+    <button ng-click="main.login()">Login</button><br><br>
+    <input type="email" ng-model="main.email" placeholder="email"><br>
+    <button ng-click="main.register()">Register</button><br>
+</form>
+
+<button ng-click="main.logout()" ng-show="main.isAuthed()">Logout</button>
+<br>
+<p>{{main.message}}</p>
+
+<div ng-show="main.isAuthed()">
+    <p>Some nice calendar here.</p>
+</div>
+
+</body>
+</html>

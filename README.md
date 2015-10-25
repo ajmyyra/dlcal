@@ -1,7 +1,7 @@
 # dlCal - Calendar software with focus on deadlines
 
-Just a quick node.js - React - Android app project 
-for a course Mobile Cloud Computing in Aalto University.
+Just a quick MEAN (MongoDB, Express, Angular, Node.js) app project 
+for the course Mobile Cloud Computing in Aalto University.
 
 Configuration is stored in config.js, so you'll need one too. Here's an example:
 
@@ -22,11 +22,12 @@ module.exports = {
 ## Installation
 
 Below are instructions to install dlCal on a new Ubuntu server.
-Remember that on small instances mongodb might need a smallfiles = true config option.
+Remember that on small instances mongodb might need a smallfiles config option (smallfiles = true).
 
 ```
 sudo apt-get update
 sudo apt-get upgrade
+sudo reboot
 sudo apt-get install mongodb nodejs npm git
 git clone https://github.com/ajmyyra/dlcal.git
 cd dlcal
@@ -50,10 +51,7 @@ Enjoy your very own dlCal setup!
 
 The system is somewhat self-explanatory. Once running, you'll need to register in order to start creating events.
 
-```
-With only the api done, you can create user "testuser" (password "testBuzzword")
-with a few events to play with. This can be initialized with HTTP GET to /initialSetup .
-```
+We now have a single-page app with Angular as well. Just go to / of the server to see the UI.
 
 ### Registering
 
@@ -87,7 +85,7 @@ To create a new event, just POST to the same URL. You can provide the following 
 #### /api/events/id
 
 To check only one specific event, you can use its id (given in events listing) with GET /api/events/id
-Withing the same URL, you can change the event with PUT request. Just provide the fields you want to change, others remain unchanged.
+Within the same URL, you can change the event with PUT request. Just provide the fields you want to change, others remain unchanged.
 It is also possible to delete the event, just by posting DELETE to the same URL.
 
 #### /api/events/search

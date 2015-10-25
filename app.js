@@ -24,16 +24,13 @@ app.set('view engine', 'jade');
 app.use(favicon(path.join(__dirname, 'public', 'favicon.png')));
 app.use(logger('combined'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: false })); // Changed when making a webapp. Change back if something breaks.
+app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 app.use('/api', api);
-
-routes.get('/', function(req, res) {
-    res.render('index', { title: 'Calendar with deadlines', headline: 'dlCal - Calendar with deadlines' });
-});
 
 routes.get('/initialSetup', function(req, res) { // Only for testing, will be removed when webapp is in production
     var event1 = new Event({
@@ -189,7 +186,7 @@ api.use(function(req, res, next) {
     if (token) {
         jwt.verify(token, app.get('protectedSecret'), function(err, decoded) {
             if (err) {
-                res.status(403);
+                res.status(401);
                 return res.json({ success: false, message: 'Failed to authenticate given token.' });
             }
             else {
@@ -199,7 +196,7 @@ api.use(function(req, res, next) {
         });
     }
     else {
-        res.status(403);
+        res.status(401);
         return res.json({ success: false, message: 'No token provided. Have you authenticated yet?' });
     }
 });
@@ -450,6 +447,16 @@ api.route('/events/:event_id')
 
 
     });
+
+routes
+    .get('*', function(req, res) {
+        res.sendFile('./public/index.html');
+    })
+
+    .get('/ang.js', function(req, res) {
+        res.sendFile('./public/ang.js');
+    });
+
 
 app.use(function(req, res, next) {
     var err = new Error('Not Found');
