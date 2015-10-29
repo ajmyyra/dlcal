@@ -24,7 +24,7 @@ app.set('view engine', 'jade');
 app.use(favicon(path.join(__dirname, 'public', 'favicon.png')));
 app.use(logger('combined'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false })); // Changed when making a webapp. Change back if something breaks.
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
 app.use(cookieParser());
 
@@ -181,7 +181,7 @@ api.post('/authenticate', function(req, res) {
 
 // Verifying user token
 api.use(function(req, res, next) {
-    var token = req.body.token || req.query.token || req.headers['x-access-token'];
+    var token = req.body.token || req.query.token || req.headers['x-access-token'] || req.headers['authorization'];
 
     if (token) {
         jwt.verify(token, app.get('protectedSecret'), function(err, decoded) {
@@ -448,15 +448,34 @@ api.route('/events/:event_id')
 
     });
 
+// TODO must be served from nginx, not the app.
+// 1) Change port to something else, Nginx to 8080
+// 2) Proxy /api to pm2, others from directory
 routes
-    .get('*', function(req, res) {
+    .get('/', function(req, res) {
         res.sendFile('./public/index.html');
     })
-
     .get('/ang.js', function(req, res) {
         res.sendFile('./public/ang.js');
+    })
+    .get('bower_components/jquery/dist/jquery.min.js', function(req, res) {
+        res.sendFile('./public/bower_components/jquery/dist/jquery.min.js');
+    })
+    .get('bower_components/moment/min/moment.min.js', function(req, res) {
+        res.sendFile('./public/bower_components/moment/min/moment.min.js');
+    })
+    .get('bower_components/angular/angular.min.js', function(req, res) {
+        res.sendFile('./public/bower_components/angular/angular.min.js');
+    })
+    .get('bower_components/angular-ui-calendar/src/calendar.js', function(req, res) {
+        res.sendFile('./public/bower_components/angular-ui-calendar/src/calendar.js');
+    })
+    .get('bower_components/fullcalendar/dist/fullcalendar.min.js', function(req, res) {
+        res.sendFile('./public/bower_components/fullcalendar/dist/fullcalendar.min.js');
+    })
+    .get('bower_components/fullcalendar/dist/gcal.js', function(req, res) {
+        res.sendFile('./public/bower_components/fullcalendar/dist/gcal.js');
     });
-
 
 app.use(function(req, res, next) {
     var err = new Error('Not Found');

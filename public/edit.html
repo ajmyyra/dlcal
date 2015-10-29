@@ -1,0 +1,11 @@
+<form ng-show="main.isAuthed()">
+    <p>Update event with new information.</p>
+    <p>TODO: POPULATE WITH EVENT INFORMATION</p>
+    <input type="text" ng-model="main.id" ng-readonly="true" placeholder="id"><br>
+    <input type="text" ng-model="main.name" placeholder="Event title"><br>
+    <input type="textarea" ng-model="main.description" placeholder="Event description"><br>
+    <input type="datetime" ng-model="main.startTime" placeholder="Starting time"><br>
+    <input type="datetime" ng-model="main.endTime" placeholder="Ending time"><br>
+    <input type="datetime" ng-model="main.deadline" placeholder="Deadline"><br>
+    <button ng-click="main.modifyEvent()">Update event</button><br>
+</form>

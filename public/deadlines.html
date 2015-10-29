@@ -1,0 +1,42 @@
+<div class="container" ng-if="main.isAuthed()">
+    <div class="row">
+        <div class="[ col-xs-12 col-sm-offset-2 col-sm-8 ]">
+            <ul class="event-list">
+                <h1>Coming up next..</h1>
+                <li data-ng-repeat="event in events">
+                    <time datetime="{{event.start.getFullYear()}}-{{event.start.getMonth()+1}}-{{event.start.getDate()}}">
+                        <span class="day">{{event.start.getDate()}}</span>
+                        <span class="month">{{monthNames[event.start.getMonth()]}}</span>
+                        <span class="year">{{event.start.getFullYear()}}</span>
+                        <span class="time">{{event.start.getHours()}}:{{event.start.getMinutes()}}</span>
+                    </time>
+                    <div class="info">
+                        <h2 class="title">{{event.title}}</h2>
+                        <p class="desc">{{event.description}}</p>
+                        <div class="deadline">
+                            &nbsp; &nbsp; <b>{{main.timeUntil(event.deadline)}} days until deadline!</b>
+                        </div>
+                    </div>
+                    <div class="actions">
+                        <ul>
+                            <li class="edit" style="width:33%;"><a href="#edit/{{event.id}}"><span class="fa fa-edit"></span></a></li>
+                            <li class="remove" style="width:34%;"><a href="#remove"><span class="fa fa-trash"></span></a></li>
+                            <li class="caladd" style="width:33%;"><a href="#caladd"><span class="fa fa-calendar"></span></a></li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<form ng-show="!main.isAuthed()">
+    <p>Please log in or register to use dlCal.</p>
+    <input type="text" ng-model="main.username" placeholder="username"><br>
+    <input type="password" ng-model="main.password" placeholder="password"><br>
+    <br>
+
+    <button ng-click="main.login()">Login</button><br><br>
+    <input type="email" ng-model="main.email" placeholder="email"><br>
+    <button ng-click="main.register()">Register</button><br>
+</form>

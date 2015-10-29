@@ -5,7 +5,7 @@
             request: function(config) {
                 var token = auth.getToken();
                 if (config.url.indexOf(API) === 0 && token) {
-                    config.headers.Authorization = 'x-access-token ' + token;
+                    config.headers.Authorization = token;
                 }
 
                 return config;
@@ -79,18 +79,21 @@
         var self = this;
 
         self.getEvents = function(year, month, day) {
+            var url;
             if (arguments.length == 1) { // Just the year
-                return $http.get(API + '/events/search/' + year);
+                $url = API + '/events/search/' + year;
             }
             else if (arguments.length == 2) { // Year and month
-                return $http.get(API + '/events/search/' + year + '/' + month);
+                $url = API + '/events/search/' + year + '/' + month;
             }
             else if (arguments.length == 3) { // Year, month and date
-                return $http.get(API + '/events/search/' + year + '/' + month + '/' + day);
+                $url = API + '/events/search/' + year + '/' + month + '/' + day;
             }
             else { // No arguments given, return everything
-                return $http.get(API + '/events');
+                $url = API + '/events';
             }
+
+            return $http.get($url);
         }
 
         self.getDeadlines = function() { // Get 5 (or less) next deadlines
@@ -124,20 +127,26 @@
         self.deleteEvent = function(eventId) {
             return $http.delete(API + '/events/' + eventId);
         }
+
     }
 
-    function MainCtrl(user, auth, cal) {
+    function MainCtrl($scope, $route, $routeParams, user, auth, cal) {
         var self = this;
 
         function handleRequest(res) {
             var token = res.data ? res.data.token : null;
-            // if(token) { console.log('JWT:', token); } // For login debugging
+            if(token) { console.log('JWT:', token); } // For login debugging
             self.message = res.data.message;
         }
 
+        $scope.eventSources = [];
+
         self.login = function() {
             user.login(self.username, self.password)
-                .then(handleRequest, handleRequest)
+                .then(function(res) {
+                    self.getDeadlines();
+                    $scope.username = self.username;
+                });
         }
         self.register = function() {
             user.register(self.username, self.password, self.email)
@@ -152,13 +161,30 @@
         }
 
         // Controller events for calendar service
-        self.getEvents = function() {
-            return cal.getEvents(self.year, self.month, self.day)
-                .then(handleRequest, handleRequest)
-        }
         self.getDeadlines = function() {
-            return cal.getDeadlines()
-                .then(handleRequest, handleRequest)
+            cal.getDeadlines()
+                .then(function(res) {
+                    // http://fullcalendar.io/docs/event_data/Event_Object/ if used
+                    $scope.events = res.data.map(function (obj) {
+                        return {
+                            "id": obj._id,
+                            "title": obj.name,
+                            "start": new Date(obj.startTime),
+                            "end": new Date(obj.endTime),
+                            "description": obj.description,
+                            "deadline": new Date(obj.deadline),
+                            "allDay": false
+                        }
+                    });
+                    $scope.eventSources = [{
+                        'events': $scope.events
+                    }];
+
+                    $scope.monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+                    ];
+
+                })
         }
         self.getEvent = function() {
             return cal.getEvent(self.eventId)
@@ -177,18 +203,47 @@
                 .then(handleRequest, handleRequest)
         }
 
+        self.timeUntil = function(timeObj) {
+            var current = new Date();
+            var difference = Math.round((timeObj.getTime() - current.getTime()) / (1000*3600*24));
+            return difference;
+        }
+
         self.calendarView = 'month';
         self.calendarDay = new Date();
+
+        if (self.isAuthed()) {
+            self.getDeadlines();
+        }
+
     }
 
-    angular.module('ang', [])
+    angular.module('ang', ['ngRoute', 'ui.calendar'])
         .factory('authInterceptor', authInterceptor)
         .service('user', userService)
         .service('auth', authService)
         .service('cal', calService)
         .constant('API', '/api')
-        .config(function($httpProvider) {
+        .config(['$httpProvider', '$routeProvider', function($httpProvider, $routeProvider) {
             $httpProvider.interceptors.push('authInterceptor');
-        })
+
+            $routeProvider
+                .when('/', {
+                    templateUrl : 'deadlines.html',
+                    controller  : 'Main'
+                })
+                .when('/calendar', {
+                    templateUrl : 'calendar.html',
+                    controller  : 'Main'
+                })
+                .when('/add', {
+                    templateUrl : 'add.html',
+                    controller  : 'Main'
+                })
+                .when('/edit/:id', {
+                    templateUrl : 'edit.html',
+                    controller  : 'Main'
+                });
+        }])
         .controller('Main', MainCtrl)
 })();

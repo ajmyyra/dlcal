@@ -16,6 +16,5 @@
     "mongoose": "~4.1.9",
     "jsonwebtoken": "~5.4.0",
     "crypto": "~0.0.3"
-    // "googleapis": "~2.1.5" // We'll see if we do it via browser or backend
   }
 }

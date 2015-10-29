@@ -1,7 +1,10 @@
+.DS_Store
 .idea
 .idea/*
 node_modules
 node_modules/*
 config.js
+public/bower_components
+public/bower_components/*
 bower_components
 bower_components/*

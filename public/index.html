@@ -4,28 +4,39 @@
     <meta charset="UTF-8">
     <title>dlCal - Calendar with deadlines</title>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
-    <script src="ang.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-route.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="stylesheets/style.css"/>
+    <link rel="stylesheet" href="bower_components/fullcalendar/dist/fullcalendar.css"/>
+    <script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="bower_components/moment/min/moment.min.js"></script>
+    <script type="text/javascript" src="bower_components/angular-ui-calendar/src/calendar.js"></script>
+    <script type="text/javascript" src="bower_components/fullcalendar/dist/fullcalendar.min.js"></script>
+    <script type="text/javascript" src="bower_components/fullcalendar/dist/gcal.js"></script>
+    <script type="text/javascript" src="ang.js"></script>
 </head>
 <body ng-app="ang" ng-controller="Main as main">
-<h1>Welcome!</h1>
-<form ng-show="!main.isAuthed()">
-    <p>Please log in or register to use dlCal.</p>
-    <input type="text" ng-model="main.username" placeholder="username"><br>
-    <input type="password" ng-model="main.password" placeholder="password"><br>
-    <br>
+<header>
+    <nav class="navbar navbar-default">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/">dlCal</a>
+            </div>
 
-    <button ng-click="main.login()">Login</button><br><br>
-    <input type="email" ng-model="main.email" placeholder="email"><br>
-    <button ng-click="main.register()">Register</button><br>
-</form>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#"><i class="fa fa-home"></i> Deadlines</a></li>
+                <li><a href="#calendar"><i class="fa fa-calendar"></i> Calendar</a></li>
+                <li><a href="#add"><i class="fa fa-plus"></i> New event</a></li>
+                <li ng-show="main.isAuthed()"><a href="#logout" ng-click="main.logout()"><i class="fa fa-bed"></i> Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+</header>
 
-<button ng-click="main.logout()" ng-show="main.isAuthed()">Logout</button>
-<br>
-<p>{{main.message}}</p>
+<div id="main">
+    <p>{{main.message}}</p>
 
-<div ng-show="main.isAuthed()">
-    <p>Some nice calendar here.</p>
+    <div ng-view></div>
 </div>
 
 </body>

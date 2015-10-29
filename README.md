@@ -28,13 +28,20 @@ Remember that on small instances mongodb might need a smallfiles config option (
 sudo apt-get update
 sudo apt-get upgrade
 sudo reboot
-sudo apt-get install mongodb nodejs npm git
+sudo apt-get install mongodb nodejs npm git bower
 git clone https://github.com/ajmyyra/dlcal.git
 cd dlcal
 npm install
 ```
 
-We'll use pm2 application manager to run the program. In actual setups we should have a proxy server between us and the Interwebs.
+Frontend uses Fullcalendar and AngularJS directive for that. Therefore we need to compile the frontend files.
+
+```
+cd public
+bower install --save angular-ui-calendar
+```
+
+We'll use pm2 application manager to run the program. In actual setups we will have a proxy server between us and the Interwebs.
 Find more from https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-ubuntu-14-04
 
 Install pm2 as shown below. Before actually running the app (pm2 start) remember to create your own config.js with correct settings.
