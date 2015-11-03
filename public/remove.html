@@ -1,12 +1,12 @@
 <form ng-controller="Edit as edit" ng-show="main.isAuthed()">
-    <p>Update event with new information.</p>
+    <p>Are you sure you want to remove this event?</p>
     <input type="text" ng-model="event._id" ng-readonly="true"><br>
-    <input type="text" ng-model="event.name"><br>
-    <input type="textarea" ng-model="event.description"><br>
-    <input type="datetime" ng-model="event.startTime"><br>
-    <input type="datetime" ng-model="event.endTime"><br>
-    <input type="datetime" ng-model="event.deadline"><br>
-    <button ng-click="edit.modifyEvent()">Update event</button><br>
+    <input type="text" ng-model="event.name" ng-readonly="true"><br>
+    <input type="textarea" ng-model="event.description" ng-readonly="true"><br>
+    <input type="datetime" ng-model="event.startTime" ng-readonly="true"><br>
+    <input type="datetime" ng-model="event.endTime" ng-readonly="true"><br>
+    <input type="datetime" ng-model="event.deadline" ng-readonly="true"><br>
+    <button ng-click="edit.deleteEvent()">Remove event</button><br>
 </form>
 
 <form ng-show="!main.isAuthed()">

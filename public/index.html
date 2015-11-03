@@ -8,11 +8,14 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous"/>
     <link rel="stylesheet" href="stylesheets/style.css"/>
     <link rel="stylesheet" href="bower_components/fullcalendar/dist/fullcalendar.css"/>
+    <link rel="stylesheet" href="bower_components/angular-bootstrap-datetimepicker/src/css/datetimepicker.css"/>
     <script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
     <script type="text/javascript" src="bower_components/moment/min/moment.min.js"></script>
     <script type="text/javascript" src="bower_components/angular-ui-calendar/src/calendar.js"></script>
     <script type="text/javascript" src="bower_components/fullcalendar/dist/fullcalendar.min.js"></script>
     <script type="text/javascript" src="bower_components/fullcalendar/dist/gcal.js"></script>
+    <script type="text/javascript" src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="bower_components/angular-bootstrap-datetimepicker/src/js/datetimepicker.js"></script>
     <script type="text/javascript" src="ang.js"></script>
 </head>
 <body ng-app="ang" ng-controller="Main as main">
@@ -20,11 +23,11 @@
     <nav class="navbar navbar-default">
         <div class="container">
             <div class="navbar-header">
-                <a class="navbar-brand" href="/">dlCal</a>
+                <a class="navbar-brand" href="#/">dlCal</a>
             </div>
 
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="#"><i class="fa fa-home"></i> Deadlines</a></li>
+                <li><a href="#/"><i class="fa fa-home"></i> Deadlines</a></li>
                 <li><a href="#calendar"><i class="fa fa-calendar"></i> Calendar</a></li>
                 <li><a href="#add"><i class="fa fa-plus"></i> New event</a></li>
                 <li ng-show="main.isAuthed()"><a href="#logout" ng-click="main.logout()"><i class="fa fa-bed"></i> Logout</a></li>

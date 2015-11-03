@@ -38,7 +38,9 @@ Frontend uses Fullcalendar and AngularJS directive for that. Therefore we need t
 
 ```
 cd public
+bower install --save bootstrap
 bower install --save angular-ui-calendar
+bower install --save angular-bootstrap-datetimepicker
 ```
 
 We'll use pm2 application manager to run the program. In actual setups we will have a proxy server between us and the Interwebs.

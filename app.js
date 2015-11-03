@@ -386,6 +386,11 @@ api.route('/events/:event_id')
     })
 
     .put(function(req, res) {
+        if (req.params.event_id == 'undefined') {
+            res.status(400); // Bad request
+            return res.json({ message: 'No event id provided.'});
+        }
+
         Event.findById(req.params.event_id, function(err, event) {
             if (err)
                 res.send(err);
@@ -472,6 +477,15 @@ routes
     })
     .get('bower_components/fullcalendar/dist/fullcalendar.min.js', function(req, res) {
         res.sendFile('./public/bower_components/fullcalendar/dist/fullcalendar.min.js');
+    })
+    .get('bower_components/angular-bootstrap-datetimepicker/src/css/datetimepicker.css', function(req, res) {
+        res.sendFile('./public/bower_components/angular-bootstrap-datetimepicker/src/css/datetimepicker.css');
+    })
+    .get('bower_components/bootstrap/dist/js/bootstrap.min.js', function(req, res) {
+        res.sendFile('./public/bower_components/bootstrap/dist/js/bootstrap.min.js');
+    })
+    .get('bower_components/angular-bootstrap-datetimepicker/src/js/datetimepicker.js', function(req, res) {
+        res.sendFile('./public/bower_components/angular-bootstrap-datetimepicker/src/js/datetimepicker.js');
     })
     .get('bower_components/fullcalendar/dist/gcal.js', function(req, res) {
         res.sendFile('./public/bower_components/fullcalendar/dist/gcal.js');

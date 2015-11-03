@@ -130,12 +130,11 @@
 
     }
 
-    function MainCtrl($scope, $route, $routeParams, user, auth, cal) {
+    function MainCtrl($scope, $route, $routeParams, $window, user, auth, cal) {
         var self = this;
 
         function handleRequest(res) {
             var token = res.data ? res.data.token : null;
-            if(token) { console.log('JWT:', token); } // For login debugging
             self.message = res.data.message;
         }
 
@@ -186,21 +185,11 @@
 
                 })
         }
-        self.getEvent = function() {
-            return cal.getEvent(self.eventId)
-                .then(handleRequest, handleRequest)
-        }
         self.addEvent = function() {
             return cal.addEvent(self.name, self.description, self.startTime, self.endTime, self.deadline)
-                .then(handleRequest, handleRequest)
-        }
-        self.modifyEvent = function() {
-            return cal.modifyEvent(self.eventId, self.name, self.description, self.startTime, self.endTime, self.deadline)
-                .then(handleRequest, handleRequest)
-        }
-        self.deleteEvent = function() {
-            return cal.deleteEvent(self.eventId)
-                .then(handleRequest, handleRequest)
+                .then(function(res) {
+                    $window.location.href = "/";
+                });
         }
 
         self.timeUntil = function(timeObj) {
@@ -218,11 +207,57 @@
 
     }
 
+    function EditCtrl($scope, $route, $routeParams, $window, user, auth, cal) {
+        var self = this;
+
+        $scope.event = [];
+
+        self.modifyEvent = function() {
+            var event = $scope.event;
+            return cal.modifyEvent(event._id, event.name, event.description, event.startTime, event.endTime, event.deadline)
+                .then(function(res) {
+                    $window.location.href = '/';
+                })
+        }
+
+        self.deleteEvent = function() {
+            var event = $scope.event;
+            return cal.deleteEvent(event._id)
+                .then(function(res) {
+                    $window.location.href = "/";
+                })
+        }
+
+        self.getEvent = function() {
+            return cal.getEvent($routeParams.eventId)
+                .then(function(res) {
+                    $scope.event = res.data;
+                })
+        }
+
+        if (auth.isAuthed() && $routeParams.eventId) {
+            self.getEvent();
+        }
+    }
+
     angular.module('ang', ['ngRoute', 'ui.calendar'])
         .factory('authInterceptor', authInterceptor)
         .service('user', userService)
         .service('auth', authService)
         .service('cal', calService)
+        .directive('ngReallyClick', [function() {
+            return {
+                restrict: 'A',
+                link: function(scope, element, attrs) {
+                    element.bind('click', function() {
+                        var message = attrs.ngReallyMessage;
+                        if (message && confirm(message)) {
+                            scope.$apply(attrs.ngReallyClick);
+                        }
+                    });
+                }
+            }
+        }])
         .constant('API', '/api')
         .config(['$httpProvider', '$routeProvider', function($httpProvider, $routeProvider) {
             $httpProvider.interceptors.push('authInterceptor');
@@ -240,10 +275,13 @@
                     templateUrl : 'add.html',
                     controller  : 'Main'
                 })
-                .when('/edit/:id', {
-                    templateUrl : 'edit.html',
-                    controller  : 'Main'
+                .when('/edit/:eventId', {
+                    templateUrl : 'edit.html'
+                })
+                .when('/remove/:eventId', {
+                    templateUrl : 'remove.html'
                 });
         }])
         .controller('Main', MainCtrl)
+        .controller('Edit', EditCtrl)
 })();
