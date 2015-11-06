@@ -1,21 +1,23 @@
-<form ng-controller="Edit as edit" ng-show="main.isAuthed()">
-    <p>Are you sure you want to remove this event?</p>
-    <input type="text" ng-model="event._id" ng-readonly="true"><br>
-    <input type="text" ng-model="event.name" ng-readonly="true"><br>
-    <input type="textarea" ng-model="event.description" ng-readonly="true"><br>
-    <input type="datetime" ng-model="event.startTime" ng-readonly="true"><br>
-    <input type="datetime" ng-model="event.endTime" ng-readonly="true"><br>
-    <input type="datetime" ng-model="event.deadline" ng-readonly="true"><br>
-    <button ng-click="edit.deleteEvent()">Remove event</button><br>
-</form>
+<div align="center">
+        <form ng-controller="Edit as edit" ng-show="main.isAuthed()">
+        <h1>Are you sure you want to remove this event?</h1>
+        ID: <input type="text" ng-model="event._id" ng-readonly="true"><br>
+        Title: <input type="text" ng-model="event.name" ng-readonly="true"><br>
+        Description: <input type="textarea" ng-model="event.description" ng-readonly="true"><br>
+        Start: <input type="datetime" ng-model="event.startTime" ng-readonly="true"><br>
+        Ending: <input type="datetime" ng-model="event.endTime" ng-readonly="true"><br>
+        Deadline: <input type="datetime" ng-model="event.deadline" ng-readonly="true"><br>
+        <button ng-click="edit.deleteEvent()">Remove event</button><br>
+    </form>
 
-<form ng-show="!main.isAuthed()">
-    <p>Please log in or register to use dlCal.</p>
-    <input type="text" ng-model="main.username" placeholder="username"><br>
-    <input type="password" ng-model="main.password" placeholder="password"><br>
-    <br>
+    <form ng-show="!main.isAuthed()">
+        <h1>Please log in or register to use dlCal</h1>
+        <input type="text" ng-model="main.username" placeholder="username"><br>
+        <input type="password" ng-model="main.password" placeholder="password"><br>
+        <br>
 
-    <button ng-click="main.login()">Login</button><br><br>
-    <input type="email" ng-model="main.email" placeholder="email"><br>
-    <button ng-click="main.register()">Register</button><br>
-</form>
+        <button ng-click="main.login()">Login</button><br><br>
+        <input type="email" ng-model="main.email" placeholder="email"><br>
+        <button ng-click="main.register()">Register</button><br>
+    </form>
+</div>

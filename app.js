@@ -32,73 +32,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 app.use('/api', api);
 
-routes.get('/initialSetup', function(req, res) { // Only for testing, will be removed when webapp is in production
-    var event1 = new Event({
-        user: 'testuser',
-        name: 'Test event 1',
-        description: 'First event for testing the system',
-        startTime: '2016-01-01T09:00',
-        endTime: '2016-01-01T12:00',
-        deadline: '2016-01-01T09:00',
-        created: new Date(),
-        changed: new Date()
-    });
-    var event2 = new Event({
-        user: 'testuser',
-        name: 'Test event 2',
-        description: 'Second event for testing the system',
-        startTime: '2015-10-15T15:00',
-        endTime: '2015-10-20T12:00',
-        deadline: '2015-10-19T20:00',
-        created: new Date(),
-        changed: new Date()
-    });
-    var event3 = new Event({
-        user: 'testuser',
-        name: 'Test event 3',
-        description: 'Third event for testing the system',
-        startTime: '2015-11-01T09:00',
-        endTime: '2015-11-08T12:00',
-        deadline: '2015-11-08T10:00',
-        created: new Date(),
-        changed: new Date()
-    });
-
-    event1.save(function(err) {
-        if (err) res.send(err);
-    });
-    event2.save(function(err) {
-        if (err) res.send(err);
-    });
-    event3.save(function(err) {
-        if (err) res.send(err);
-    });
-
-    var testuser = new User({
-        username: 'testuser',
-        email: 'test@example.com'
-    });
-    testuser.created = new Date();
-    testuser.changed = new Date();
-
-    var cleartextpw = 'testBuzzword';
-    testuser.salt = crypto.randomBytes(128).toString('base64'); // creating salt from random bytes
-    crypto.pbkdf2(cleartextpw, testuser.salt, 10000, 512, function(err, hashedKey) { // hashing the password with salt
-        if (err)
-            res.send(err);
-
-        testuser.password = hashedKey;
-
-        testuser.save(function(err) {
-            if (err)
-                res.send(err);
-
-            console.log('Initial setup done succesfully.');
-            return res.json({ success: 'true', message: 'Setup done succesfully!' });
-        });
-    });
-});
-
 api.post('/register', function(req, res) {
     if (!req.body.username || !req.body.password || !req.body.email) {
         res.status(400); // Bad request
@@ -453,43 +386,6 @@ api.route('/events/:event_id')
 
     });
 
-// TODO must be served from nginx, not the app.
-// 1) Change port to something else, Nginx to 8080
-// 2) Proxy /api to pm2, others from directory
-routes
-    .get('/', function(req, res) {
-        res.sendFile('./public/index.html');
-    })
-    .get('/ang.js', function(req, res) {
-        res.sendFile('./public/ang.js');
-    })
-    .get('bower_components/jquery/dist/jquery.min.js', function(req, res) {
-        res.sendFile('./public/bower_components/jquery/dist/jquery.min.js');
-    })
-    .get('bower_components/moment/min/moment.min.js', function(req, res) {
-        res.sendFile('./public/bower_components/moment/min/moment.min.js');
-    })
-    .get('bower_components/angular/angular.min.js', function(req, res) {
-        res.sendFile('./public/bower_components/angular/angular.min.js');
-    })
-    .get('bower_components/angular-ui-calendar/src/calendar.js', function(req, res) {
-        res.sendFile('./public/bower_components/angular-ui-calendar/src/calendar.js');
-    })
-    .get('bower_components/fullcalendar/dist/fullcalendar.min.js', function(req, res) {
-        res.sendFile('./public/bower_components/fullcalendar/dist/fullcalendar.min.js');
-    })
-    .get('bower_components/angular-bootstrap-datetimepicker/src/css/datetimepicker.css', function(req, res) {
-        res.sendFile('./public/bower_components/angular-bootstrap-datetimepicker/src/css/datetimepicker.css');
-    })
-    .get('bower_components/bootstrap/dist/js/bootstrap.min.js', function(req, res) {
-        res.sendFile('./public/bower_components/bootstrap/dist/js/bootstrap.min.js');
-    })
-    .get('bower_components/angular-bootstrap-datetimepicker/src/js/datetimepicker.js', function(req, res) {
-        res.sendFile('./public/bower_components/angular-bootstrap-datetimepicker/src/js/datetimepicker.js');
-    })
-    .get('bower_components/fullcalendar/dist/gcal.js', function(req, res) {
-        res.sendFile('./public/bower_components/fullcalendar/dist/gcal.js');
-    });
 
 app.use(function(req, res, next) {
     var err = new Error('Not Found');

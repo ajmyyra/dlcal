@@ -1,20 +1,22 @@
-<form ng-show="main.isAuthed()">
-    <p>Add a new event.</p>
-    <input type="text" ng-model="main.name" placeholder="Event title"><br>
-    <input type="textarea" ng-model="main.description" placeholder="Event description"><br>
-    <input type="datetime" ng-model="main.startTime" placeholder="Starting time"><br>
-    <input type="datetime" ng-model="main.endTime" placeholder="Ending time"><br>
-    <input type="datetime" ng-model="main.deadline" placeholder="Deadline"><br>
-    <button ng-click="main.addEvent()">Add event</button><br>
-</form>
+<div align="center">
+    <form ng-show="main.isAuthed()">
+        <h1>Add a new event</h1>
+        Title: <input type="text" ng-model="main.name" placeholder="Event title"><br>
+        Description: <input type="textarea" ng-model="main.description" placeholder="Event description"><br>
+        Start: <input type="datetime" ng-model="main.startTime" placeholder="Starting time"><br>
+        Ending: <input type="datetime" ng-model="main.endTime" placeholder="Ending time"><br>
+        Deadline: <input type="datetime" ng-model="main.deadline" placeholder="Deadline"><br>
+        <button ng-click="main.addEvent()">Add event</button><br>
+    </form>
 
-<form ng-show="!main.isAuthed()">
-    <p>Please log in or register to use dlCal.</p>
-    <input type="text" ng-model="main.username" placeholder="username"><br>
-    <input type="password" ng-model="main.password" placeholder="password"><br>
-    <br>
+    <form ng-show="!main.isAuthed()">
+        <h1>Please log in or register to use dlCal</h1>
+        <input type="text" ng-model="main.username" placeholder="username"><br>
+        <input type="password" ng-model="main.password" placeholder="password"><br>
+        <br>
 
-    <button ng-click="main.login()">Login</button><br><br>
-    <input type="email" ng-model="main.email" placeholder="email"><br>
-    <button ng-click="main.register()">Register</button><br>
-</form>
+        <button ng-click="main.login()">Login</button><br><br>
+        <input type="email" ng-model="main.email" placeholder="email"><br>
+        <button ng-click="main.register()">Register</button><br>
+    </form>
+</div>

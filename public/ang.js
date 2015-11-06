@@ -159,25 +159,11 @@
             return auth.isAuthed ? auth.isAuthed() : false
         }
 
-        // Controller events for calendar service
+        // Controller deadlines for calendar service
         self.getDeadlines = function() {
             cal.getDeadlines()
                 .then(function(res) {
-                    // http://fullcalendar.io/docs/event_data/Event_Object/ if used
-                    $scope.events = res.data.map(function (obj) {
-                        return {
-                            "id": obj._id,
-                            "title": obj.name,
-                            "start": new Date(obj.startTime),
-                            "end": new Date(obj.endTime),
-                            "description": obj.description,
-                            "deadline": new Date(obj.deadline),
-                            "allDay": false
-                        }
-                    });
-                    $scope.eventSources = [{
-                        'events': $scope.events
-                    }];
+                    $scope.deadlines = self.modifyToFullcalForm(res.data);
 
                     $scope.monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
                         "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
@@ -185,6 +171,37 @@
 
                 })
         }
+
+        // Controller events for calendar service
+        self.getEvents = function() {
+            cal.getEvents()
+                .then(function(res) {
+                    $scope.events = self.modifyToFullcalForm(res.data);
+                    $scope.eventSources = [{
+                        'events': $scope.events
+                    }];
+
+                    $scope.monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+                    ];
+                })
+        }
+
+        self.modifyToFullcalForm = function(backendEvents) {
+            // http://fullcalendar.io/docs/event_data/Event_Object/
+            return backendEvents.map(function (obj) {
+                return {
+                    "id": obj._id,
+                    "title": obj.name,
+                    "start": new Date(obj.startTime),
+                    "end": new Date(obj.endTime),
+                    "description": obj.description,
+                    "deadline": new Date(obj.deadline),
+                    "allDay": false
+                }
+            });
+        }
+
         self.addEvent = function() {
             return cal.addEvent(self.name, self.description, self.startTime, self.endTime, self.deadline)
                 .then(function(res) {
@@ -203,6 +220,7 @@
 
         if (self.isAuthed()) {
             self.getDeadlines();
+            self.getEvents();
         }
 
     }
@@ -267,6 +285,10 @@
                     templateUrl : 'deadlines.html',
                     controller  : 'Main'
                 })
+                .when('/events', {
+                    templateUrl : 'events.html',
+                    controller  : 'Main'
+                })
                 .when('/calendar', {
                     templateUrl : 'calendar.html',
                     controller  : 'Main'
@@ -274,6 +296,9 @@
                 .when('/add', {
                     templateUrl : 'add.html',
                     controller  : 'Main'
+                })
+                .when('/view/:eventId', {
+                    templateUrl : 'view.html'
                 })
                 .when('/edit/:eventId', {
                     templateUrl : 'edit.html'

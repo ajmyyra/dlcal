@@ -40,11 +40,9 @@ Frontend uses Fullcalendar and AngularJS directive for that. Therefore we need t
 cd public
 bower install --save bootstrap
 bower install --save angular-ui-calendar
-bower install --save angular-bootstrap-datetimepicker
 ```
 
-We'll use pm2 application manager to run the program. In actual setups we will have a proxy server between us and the Interwebs.
-Find more from https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-ubuntu-14-04
+We'll use pm2 application manager to run the program.
 
 Install pm2 as shown below. Before actually running the app (pm2 start) remember to create your own config.js with correct settings.
 
@@ -54,7 +52,13 @@ sudo ln -s /usr/bin/nodejs /usr/local/bin/node
 pm2 start bin/www
 ```
 
-Enjoy your very own dlCal setup!
+Check that dlCal is running in port 3030. 
+
+Install nginx and proxy /api to port 3030 with the following configuration.
+
+TODO install and conf https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-ubuntu-14-04
+
+Enjoy your very own dlCal installation!
 
 ## Setting up
 
