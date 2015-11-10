@@ -62,9 +62,9 @@ Install nginx and proxy /api to port 3030 with the following configuration.
 ```
 sudo apt-get install nginx
 nano /etc/nginx/sites-available/dlcal
-ln -s /etc/nginx/sites-available/dlcal /etc/nginx/sites-enable/dlcal
-service nginx configtest
-service nginx restart
+sudo ln -s /etc/nginx/sites-available/dlcal /etc/nginx/sites-enable/dlcal
+sudo service nginx configtest
+sudo service nginx restart
 ```
 
 Here's a example configuration for your nginx server.
