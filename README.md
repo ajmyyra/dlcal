@@ -5,10 +5,12 @@ for the course Mobile Cloud Computing in Aalto University.
 
 Configuration is stored in config.js, so you'll need one too. Here's an example:
 
+```
 module.exports = {
     'secret': 'therearetoofewnomihoudaisinfinland',
     'database': 'mongodb://localhost:27017/dlcal'
 }
+```
 
 ## Known bugs
 * Timezones! Times are added as UTC times, but MongoDB searches them with a proper timezone.
@@ -28,7 +30,7 @@ Remember that on small instances mongodb might need a smallfiles config option (
 sudo apt-get update
 sudo apt-get upgrade
 sudo reboot
-sudo apt-get install mongodb nodejs npm git bower
+sudo apt-get install mongodb nodejs npm git
 git clone https://github.com/ajmyyra/dlcal.git
 cd dlcal
 npm install
@@ -37,6 +39,7 @@ npm install
 Frontend uses Fullcalendar and AngularJS directive for that. Therefore we need to compile the frontend files.
 
 ```
+sudo npm install bower -g
 cd public
 bower install --save bootstrap
 bower install --save angular-ui-calendar
@@ -44,7 +47,7 @@ bower install --save angular-ui-calendar
 
 We'll use pm2 application manager to run the program.
 
-Install pm2 as shown below. Before actually running the app (pm2 start) remember to create your own config.js with correct settings.
+Install pm2 as shown below. Before actually running the app (pm2 start) remember to create your own config.js with correct settings (see above).
 
 ```
 sudo npm install pm2 -g
