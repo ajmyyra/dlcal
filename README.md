@@ -56,7 +56,34 @@ Check that dlCal is running in port 3030.
 
 Install nginx and proxy /api to port 3030 with the following configuration.
 
-TODO install and conf https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-ubuntu-14-04
+```
+sudo apt-get install nginx
+nano /etc/nginx/sites-available/dlcal
+ln -s /etc/nginx/sites-available/dlcal /etc/nginx/sites-enable/dlcal
+service nginx configtest
+service nginx restart
+```
+
+Here's a example configuration for your nginx server.
+
+```
+server {
+  listen 8080;
+
+  server_name dlcal.example.com;
+
+  root /home/username/dlcal/public;
+
+  location /api/ {
+    proxy_pass http://localhost:3030/api/;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+  }
+
+}
+```
+
+All done! You can point your browser to your servers port 8080 and check if it works.
 
 Enjoy your very own dlCal installation!
 
