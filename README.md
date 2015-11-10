@@ -31,6 +31,7 @@ sudo apt-get update
 sudo apt-get upgrade
 sudo reboot
 sudo apt-get install mongodb nodejs npm git
+sudo ln -s /usr/bin/nodejs /usr/local/bin/node
 git clone https://github.com/ajmyyra/dlcal.git
 cd dlcal
 npm install
@@ -51,7 +52,6 @@ Install pm2 as shown below. Before actually running the app (pm2 start) remember
 
 ```
 sudo npm install pm2 -g
-sudo ln -s /usr/bin/nodejs /usr/local/bin/node
 pm2 start bin/www
 ```
 
